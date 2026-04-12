@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 📱 Local Services Super App (Kabul Version)
 
 A lightweight Flutter-based mobile application designed to provide quick and easy access to essential local services in Kabul city — without requiring user registration or login.
@@ -184,3 +185,22 @@ GET /services
 ## 🎓 Conclusion
 
 The Local Services Super App offers a simple and effective solution for accessing essential services in Kabul. Its scalable architecture allows for future enhancements such as offline support, maps integration, and nationwide expansion.
+=======
+# local_servieces
+
+A new Flutter project.
+
+## Getting Started
+
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
+- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
+>>>>>>> 7903b77 (Initial commit)
