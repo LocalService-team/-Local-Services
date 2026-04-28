@@ -4,118 +4,403 @@ void main() {
   runApp(const MyApp());
 }
 
+class AppColors {
+  static const primary = Color(0xFF4A148C);
+  static const secondary = Color(0xFF7B1FA2);
+  static const accent = Color(0xFF00C853);
+
+  static const background = Color(0xFFF1F3F6);
+  static const card = Colors.white;
+
+  static const textDark = Color(0xFF1A1A1A);
+  static const textLight = Color(0xFF6B7280);
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'خدمات محلی',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+        scaffoldBackgroundColor: AppColors.background,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const ServiceListScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class ServiceListScreen extends StatefulWidget {
+  const ServiceListScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<ServiceListScreen> createState() => _ServiceListScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+class _ServiceListScreenState extends State<ServiceListScreen> {
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+
+      // ---------------- HEADER ----------------
+
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(130),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20,55,20,20),
+
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary,
+                AppColors.secondary,
+              ],
             ),
-          ],
+          ),
+
+          child: Column(
+            children: [
+
+              Row(
+                mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
+                children: [
+
+                  const Icon(
+                    Icons.notifications_none,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+
+                  const Text(
+                    "خدمات محلی",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  CircleAvatar(
+                    backgroundColor: Colors.white24,
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height:16),
+
+              // -------- SEARCH ----------
+
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                  BorderRadius.circular(16),
+
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 10,
+                      offset: Offset(0,4),
+                      color: Colors.black12,
+                    )
+                  ],
+                ),
+
+                child: const TextField(
+                  textAlign: TextAlign.right,
+                  decoration: InputDecoration(
+                    hintText: "جستجو...",
+                    prefixIcon: Icon(Icons.search),
+                    border: InputBorder.none,
+                    contentPadding:
+                    EdgeInsets.symmetric(
+                        vertical:15
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+
+      // ---------------- BODY ----------------
+
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+
+          const SizedBox(height:10),
+
+          const Text(
+            "خدمات پیشنهادی",
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              fontSize:20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height:16),
+
+          ServiceCard(
+            title: "نانوایی احمد",
+            category: "نانوایی",
+            rating: "4.8",
+            address: "کابل، کارته ۳",
+            image:
+            "https://images.unsplash.com/photo-1509440159596-0249088772ff",
+          ),
+
+          const SizedBox(height:18),
+
+          ServiceCard(
+            title: "دواخانه سلام",
+            category: "دواخانه",
+            rating: "4.7",
+            address: "کابل، مرکز شهر",
+            image:
+            "https://images.unsplash.com/photo-1587854692152-cbe660dbde88",
+          ),
+
+        ],
+      ),
+
+      // ------------ MODERN NAV ----------
+
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: currentIndex,
+
+        onDestinationSelected: (index){
+          setState(() {
+            currentIndex=index;
+          });
+        },
+
+        destinations: const [
+
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: "خانه",
+          ),
+
+          NavigationDestination(
+            icon: Icon(Icons.map_outlined),
+            selectedIcon: Icon(Icons.map),
+            label: "نقشه",
+          ),
+
+          NavigationDestination(
+            icon: Icon(Icons.favorite_border),
+            selectedIcon: Icon(Icons.favorite),
+            label: "علاقه‌مندی",
+          ),
+
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: "پروفایل",
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class ServiceCard extends StatelessWidget {
+
+  final String title;
+  final String category;
+  final String rating;
+  final String address;
+  final String image;
+
+  const ServiceCard({
+    super.key,
+    required this.title,
+    required this.category,
+    required this.rating,
+    required this.address,
+    required this.image,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+
+      decoration: BoxDecoration(
+        color: AppColors.card,
+
+        borderRadius:
+        BorderRadius.circular(20),
+
+        boxShadow: [
+          BoxShadow(
+            blurRadius:15,
+            offset: Offset(0,5),
+            color: Colors.black12,
+          )
+        ],
+      ),
+
+      child: Column(
+        crossAxisAlignment:
+        CrossAxisAlignment.end,
+
+        children: [
+
+          ClipRRect(
+            borderRadius:
+            BorderRadius.circular(16),
+
+            child: Image.network(
+              image,
+              height:160,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          const SizedBox(height:12),
+
+          Row(
+            mainAxisAlignment:
+            MainAxisAlignment.spaceBetween,
+
+            children: [
+
+              IconButton(
+                onPressed: (){},
+                icon: Icon(
+                  Icons.favorite_border,
+                  color: Colors.redAccent,
+                ),
+              ),
+
+              Column(
+                crossAxisAlignment:
+                CrossAxisAlignment.end,
+
+                children: [
+
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize:18,
+                      fontWeight:
+                      FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height:6),
+
+                  Container(
+                    padding:
+                    EdgeInsets.symmetric(
+                      horizontal:10,
+                      vertical:4,
+                    ),
+
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius:
+                      BorderRadius.circular(20),
+                    ),
+
+                    child: Text(category),
+                  )
+                ],
+              )
+            ],
+          ),
+
+          const SizedBox(height:10),
+
+          Row(
+            mainAxisAlignment:
+            MainAxisAlignment.end,
+            children: [
+              Text(rating),
+              SizedBox(width:4),
+              Icon(
+                Icons.star,
+                size:18,
+                color: Colors.amber,
+              )
+            ],
+          ),
+
+          const SizedBox(height:8),
+
+          Text(
+            address,
+            style: TextStyle(
+              color: AppColors.textLight,
+            ),
+          ),
+
+          const SizedBox(height:18),
+
+          Row(
+            children: [
+
+              Expanded(
+                child: FilledButton.icon(
+                  style:
+                  FilledButton.styleFrom(
+                    backgroundColor:
+                    AppColors.accent,
+                    shape:
+                    RoundedRectangleBorder(
+                      borderRadius:
+                      BorderRadius.circular(14),
+                    ),
+                  ),
+
+                  onPressed: (){},
+                  icon: Icon(Icons.call),
+                  label: Text("تماس"),
+                ),
+              ),
+
+              const SizedBox(width:10),
+
+              Expanded(
+                child: OutlinedButton(
+                  style:
+                  OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: AppColors.primary,
+                    ),
+                    shape:
+                    RoundedRectangleBorder(
+                      borderRadius:
+                      BorderRadius.circular(14),
+                    ),
+                  ),
+                  onPressed: (){},
+                  child: Text("مشاهده"),
+                ),
+              )
+            ],
+          )
+        ],
       ),
     );
   }
