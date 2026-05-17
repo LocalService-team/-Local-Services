@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // Set this to HomeScreen() to test your list,
-      // or change it to Latifa's Home widget name once the merge is complete!
       home: const HomeScreen(),
     );
   }
