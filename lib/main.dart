@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart'; // Imports your Home Screen layout
-import 'theme/app_colors.dart';   // Imports your team's color palette
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'l10n/app_localizations.dart';
+import 'screens/service_list_screen.dart';
+import 'l10n/generated/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'theme/app_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -12,15 +22,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Local Services',
       debugShowCheckedModeBanner: false,
-      title: 'Local Services App',
-      theme: ThemeData(
-        // Hooking up your primary Teal color as the theme anchor
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryTeal),
-        useMaterial3: true,
-      ),
-      // Set this to HomeScreen() to test your list,
-      home: const HomeScreen(),
+
+      //  Applying  the custom theme layout rules here:
+      theme: AppTheme.lightTheme,
+
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('en'),
+
+      home: const ServiceListScreen(),
     );
   }
 }

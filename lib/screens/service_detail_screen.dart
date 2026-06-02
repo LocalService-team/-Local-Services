@@ -6,6 +6,7 @@ final Service service;
 
 const ServiceDetailScreen({
 super.key,
+
 required this.service,
 });
 

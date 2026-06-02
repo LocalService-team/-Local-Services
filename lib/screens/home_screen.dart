@@ -16,17 +16,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Service> services = [
     Service(
+      id: 'bakery_01',
+      categoryKey: 'serviceBakery', // Fits your multi-language infrastructure setup
       title: 'نانوایی احمد',
       category: 'نانوایی',
       rating: 4.8,
       address: 'کابل، کارته ۳',
+      imageUrl: 'https://images.unsplash.com/photo-1599307772528-187c53b3189c?w=500',
       image: 'https://images.unsplash.com/photo-1599307772528-187c53b3189c?w=500',
     ),
     Service(
+      id: 'pharmacy_01',
+      categoryKey: 'servicePharmacy',
       title: 'دواخانه سلام',
       category: 'دواخانه',
       rating: 4.7,
       address: 'کابل، مرکز شهر',
+      imageUrl: 'https://images.unsplash.com/photo-1621370845358-18e80eb0b329?w=500',
       image: 'https://images.unsplash.com/photo-1621370845358-18e80eb0b329?w=500',
     ),
   ];
@@ -159,7 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
             _currentIndex = index;
           });
         },
-        indicatorColor: AppColors.secondaryTeal.withOpacity(0.2),
+        // Updated from .withOpacity to resolve the deprecation warning
+        indicatorColor: AppColors.secondaryTeal.withValues(alpha: 0.2),
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
