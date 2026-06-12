@@ -8,8 +8,8 @@ class ServiceListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // This activates the localization dictionary using your new import path!
     final localizations = AppLocalizations.of(context)!;
+    final languageCode = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
       appBar: AppBar(
@@ -17,7 +17,7 @@ class ServiceListScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('services').snapshots(),
+        stream: FirebaseFirestore.instance.collection('service').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(child: Text('Something went wrong'));
@@ -38,7 +38,7 @@ class ServiceListScreen extends StatelessWidget {
               final serviceData = docs[index].data() as Map<String, dynamic>;
               final service = Service.fromFirestore(serviceData, docs[index].id);
 
-              // Match and translate your keys dynamically
+              // Get translated category label
               String translatedCategory = service.categoryKey;
               if (service.categoryKey == 'servicePlumber') translatedCategory = localizations.servicePlumber;
               if (service.categoryKey == 'serviceElectrician') translatedCategory = localizations.serviceElectrician;
@@ -52,20 +52,37 @@ class ServiceListScreen extends StatelessWidget {
                       ? CircleAvatar(backgroundImage: NetworkImage(service.imageUrl))
                       : const CircleAvatar(child: Icon(Icons.build)),
                   title: Text(
-                    translatedCategory,
+                    service.getTitle(languageCode), // ✅ shows right language
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  subtitle: Row(
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.star, color: Colors.amber, size: 18),
-                      const SizedBox(width: 4),
-                      Text('${service.rating}', style: const TextStyle(fontSize: 14)),
+                      Text(
+                        translatedCategory,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 16),
+                          const SizedBox(width: 4),
+                          Text('${service.rating}'),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              service.getAddress(languageCode), // ✅ shows right language
+                              style: const TextStyle(fontSize: 12),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () {
-                    // Links up with your teammate's detail view later
-                  },
+                  onTap: () {},
                 ),
               );
             },

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../models/service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/service_card.dart';
@@ -17,34 +17,33 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Service> services = [
     Service(
       id: 'bakery_01',
-      categoryKey: 'serviceBakery', // Fits your multi-language infrastructure setup
-      title: 'نانوایی احمد',
-      category: 'نانوایی',
+      categoryKey: 'serviceBakery',
+      titleEn: 'Ahmads Bakery',
+      titleFa: 'Ahmads Bakery FA',
+      titlePs: 'Ahmads Bakery PS',
+      addressEn: 'Karte 3, Kabul',
+      addressFa: 'Karte 3, Kabul FA',
+      addressPs: 'Karte 3, Kabul PS',
       rating: 4.8,
-      address: 'کابل، کارته ۳',
       imageUrl: 'https://images.unsplash.com/photo-1599307772528-187c53b3189c?w=500',
-      image: 'https://images.unsplash.com/photo-1599307772528-187c53b3189c?w=500',
     ),
     Service(
       id: 'pharmacy_01',
       categoryKey: 'servicePharmacy',
-      title: 'دواخانه سلام',
-      category: 'دواخانه',
+      titleEn: 'Salam Pharmacy',
+      titleFa: 'Salam Pharmacy FA',
+      titlePs: 'Salam Pharmacy PS',
+      addressEn: 'City Centre, Kabul',
+      addressFa: 'City Centre, Kabul FA',
+      addressPs: 'City Centre, Kabul PS',
       rating: 4.7,
-      address: 'کابل، مرکز شهر',
       imageUrl: 'https://images.unsplash.com/photo-1621370845358-18e80eb0b329?w=500',
-      image: 'https://images.unsplash.com/photo-1621370845358-18e80eb0b329?w=500',
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final filteredServices = services.where((service) {
-      return service.title.contains(searchQuery) ||
-          service.category.contains(searchQuery);
-    }).toList();
-
-    // Dynamically calculate the app bar height including the top safe area notch
+    final filteredServices = services;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
     return Scaffold(
@@ -65,25 +64,13 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Icon(
-                    Icons.notifications_none,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                  const Text(
-                    'خدمات محلی',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  const Icon(Icons.notifications_none, color: Colors.white, size: 28),
+                  const Text('Local Services',
+                    style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const CircleAvatar(
                     backgroundColor: Colors.white24,
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
+                    child: Icon(Icons.person, color: Colors.white),
                   ),
                 ],
               ),
@@ -92,23 +79,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 12,
-                      offset: Offset(0, 4),
-                      color: Colors.black12,
-                    ),
-                  ],
                 ),
                 child: TextField(
-                  textAlign: TextAlign.right,
-                  onChanged: (value) {
-                    setState(() {
-                      searchQuery = value;
-                    });
-                  },
+                  onChanged: (value) => setState(() => searchQuery = value),
                   decoration: const InputDecoration(
-                    hintText: 'جستجو...',
+                    hintText: 'Search...',
                     prefixIcon: Icon(Icons.search, color: Colors.grey),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 16),
@@ -125,34 +100,22 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Text(
-                'خدمات پیشنهادی',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+              const Text('Suggested Services',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
               const SizedBox(height: 16),
               Expanded(
                 child: filteredServices.isEmpty
-                    ? const Center(
-                  child: Text(
-                    'نتیجه‌ای پیدا نشد',
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
-                  ),
-                )
+                    ? const Center(child: Text('No results'))
                     : ListView.builder(
-                  itemCount: filteredServices.length,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    final service = filteredServices[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: ServiceCard(service: service),
-                    );
-                  },
-                ),
+                        itemCount: filteredServices.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: ServiceCard(service: filteredServices[index]),
+                          );
+                        },
+                      ),
               ),
             ],
           ),
@@ -160,34 +123,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        // Updated from .withOpacity to resolve the deprecation warning
+        onDestinationSelected: (index) => setState(() => _currentIndex = index),
         indicatorColor: AppColors.secondaryTeal.withValues(alpha: 0.2),
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'خانه',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.map_outlined),
-            selectedIcon: Icon(Icons.map),
-            label: 'نقشه',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.favorite_border),
-            selectedIcon: Icon(Icons.favorite),
-            label: 'علاقه‌مندی',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'پروفایل',
-          ),
+          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.map_outlined), selectedIcon: Icon(Icons.map), label: 'Map'),
+          NavigationDestination(icon: Icon(Icons.favorite_border), selectedIcon: Icon(Icons.favorite), label: 'Favourites'),
+          NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
