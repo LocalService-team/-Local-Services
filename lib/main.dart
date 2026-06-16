@@ -1,15 +1,22 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:local_services/services/notification_service.dart';
 import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/main_screen.dart';
 import 'theme/app_theme.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  final notificationService = NotificationService();
+
+  await notificationService.initialize();
+  await notificationService.requestPermission();
+
   runApp(const MyApp());
 }
 
