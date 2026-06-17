@@ -16,6 +16,7 @@ Future<void> main() async {
 
   await notificationService.initialize();
   await notificationService.requestPermission();
+  await notificationService.showNotification();
 
   runApp(const MyApp());
 }

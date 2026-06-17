@@ -22,4 +22,27 @@ class NotificationService {
         >()
         ?.requestNotificationsPermission();
   }
+
+  Future<void> showNotification() async {
+    const AndroidNotificationDetails androidDetails =
+    AndroidNotificationDetails(
+      'daily_recommendation',
+      'Daily Recommendation',
+      channelDescription: 'Daily recommendations for nearby places',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    const NotificationDetails notificationDetails =
+    NotificationDetails(
+      android: androidDetails,
+    );
+
+    await notificationsPlugin.show(
+      id: 0,
+      title: 'Daily Recommendation',
+      body: 'Discover nearby hospitals, cafes, and places today!',
+      notificationDetails: notificationDetails,
+    );
+  }
 }
