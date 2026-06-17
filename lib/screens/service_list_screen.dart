@@ -1,88 +1,90 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../l10n/app_localizations.dart';
 import '../models/service.dart';
+import '../theme/app_colors.dart';
+import '../screens/service_detail_screen.dart';
 
 class ServiceListScreen extends StatelessWidget {
-  const ServiceListScreen({super.key});
+  final String? categoryKey;
+  final String? categoryLabel;
+
+  const ServiceListScreen({super.key, this.categoryKey, this.categoryLabel, required List<Service> services});
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
-    final languageCode = Localizations.localeOf(context).languageCode;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations.appTitle),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: AppColors.primaryTeal,
+        title: Text(categoryLabel ?? 'خدمات', style: const TextStyle(color: Colors.white)),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('service').snapshots(),
+        stream: categoryKey != null
+            ? FirebaseFirestore.instance
+                .collection('service')
+                .where('categoryKey', isEqualTo: categoryKey)
+                .snapshots()
+            : FirebaseFirestore.instance.collection('service').snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Center(child: Text('Something went wrong'));
-          }
+          if (snapshot.hasError) return const Center(child: Text('Something went wrong'));
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-
           final docs = snapshot.data!.docs;
-
-          if (docs.isEmpty) {
-            return const Center(child: Text('No services available yet.'));
-          }
+          if (docs.isEmpty) return const Center(child: Text('No services available yet.'));
 
           return ListView.builder(
+            padding: const EdgeInsets.all(16),
             itemCount: docs.length,
             itemBuilder: (context, index) {
-              final serviceData = docs[index].data() as Map<String, dynamic>;
-              final service = Service.fromFirestore(serviceData, docs[index].id);
-
-              // Get translated category label
-              String translatedCategory = service.categoryKey;
-              if (service.categoryKey == 'servicePlumber') translatedCategory = localizations.servicePlumber;
-              if (service.categoryKey == 'serviceElectrician') translatedCategory = localizations.serviceElectrician;
-              if (service.categoryKey == 'serviceCleaner') translatedCategory = localizations.serviceCleaner;
-
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                elevation: 2,
+              final service = Service.fromFirestore(
+                  docs[index].data() as Map<String, dynamic>, docs[index].id);
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: const [
+                    BoxShadow(blurRadius: 8, color: Colors.black12, offset: Offset(0, 2)),
+                  ],
+                ),
                 child: ListTile(
-                  leading: service.imageUrl.isNotEmpty
-                      ? CircleAvatar(backgroundImage: NetworkImage(service.imageUrl))
-                      : const CircleAvatar(child: Icon(Icons.build)),
-                  title: Text(
-                    service.getTitle(languageCode), // ✅ shows right language
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        translatedCategory,
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                      Row(
-                        children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 16),
-                          const SizedBox(width: 4),
-                          Text('${service.rating}'),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              service.getAddress(languageCode), // ✅ shows right language
-                              style: const TextStyle(fontSize: 12),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                  contentPadding: const EdgeInsets.all(12),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: service.imageUrl.isNotEmpty
+                        ? Image.network(service.imageUrl,
+                            width: 60, height: 60, fit: BoxFit.cover)
+                        : Container(
+                            width: 60,
+                            height: 60,
+                            color: Colors.grey.shade200,
+                            child: const Icon(Icons.build),
                           ),
-                        ],
-                      ),
-                    ],
                   ),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () {},
+                  title: Text(service.titleFa,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.right),
+                  subtitle: Text(service.addressFa,
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(fontSize: 12)),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ServiceDetailScreen(service: service),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryTeal,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('مشاهده', style: TextStyle(color: Colors.white)),
+                  ),
                 ),
               );
             },

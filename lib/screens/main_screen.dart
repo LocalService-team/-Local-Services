@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'home_screen.dart';
+import 'map_screen.dart';
+import '../theme/app_colors.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -13,9 +15,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> screens = [
     const HomeScreen(),
-    const Center(child: Text("نقشه")),
-    const Center(child: Text("علاقه‌مندی‌ها")),
-    const Center(child: Text("پروفایل")),
+    const MapScreen(),
+    const Center(child: Text('علاقه‌مندی‌ها')),
+    const Center(child: Text('پروفایل')),
   ];
 
   @override
@@ -25,11 +27,14 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: index,
         onTap: (i) => setState(() => index = i),
+        selectedItemColor: AppColors.primaryTeal,
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "خانه"),
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: "نقشه"),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "علاقه‌مندی"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "پروفایل"),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'خانه'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'نقشه'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'علاقه‌مندی'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'پروفایل'),
         ],
       ),
     );
