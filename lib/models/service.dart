@@ -1,4 +1,4 @@
-class Service {
+﻿class Service {
   final String id;
   final String categoryKey;
   final String titleEn;
@@ -9,6 +9,9 @@ class Service {
   final String addressPs;
   final double rating;
   final String imageUrl;
+  final String phone;
+  final double? latitude;
+  final double? longitude;
 
   Service({
     required this.id,
@@ -21,6 +24,9 @@ class Service {
     required this.addressPs,
     required this.rating,
     required this.imageUrl,
+    this.phone = '',
+    this.latitude,
+    this.longitude,
   });
 
   factory Service.fromFirestore(Map<String, dynamic> data, String id) {
@@ -35,6 +41,9 @@ class Service {
       addressPs: data['address_ps'] ?? '',
       rating: (data['rating'] ?? 0.0).toDouble(),
       imageUrl: data['imageUrl'] ?? '',
+      phone: data['phone'] ?? '',
+      latitude: data['latitude']?.toDouble(),
+      longitude: data['longitude']?.toDouble(),
     );
   }
 

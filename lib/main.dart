@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:local_services/services/notification_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/main_screen.dart';
@@ -18,6 +19,13 @@ Future<void> main() async {
   await notificationService.requestPermission();
   await notificationService.showNotification();
 
+  
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+    sslEnabled: true,
+  );
+  
   runApp(const MyApp());
 }
 
