@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:local_services/screens/notifications_screen.dart';
 import '../models/service.dart';
 import '../theme/app_colors.dart';
 import '../screens/service_list_screen.dart';
@@ -122,7 +123,46 @@ class HomeScreen extends StatelessWidget {
                     const Text('خدمات محلی',
                       style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                     ),
-                    const Icon(Icons.notifications_none, color: Colors.white, size: 28),
+                    IconButton(
+                      icon: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          const Icon(
+                            Icons.notifications_none,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+
+                          Positioned(
+                            right: -6,
+                            top: -6,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Text(
+                                '',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => NotificationsScreen(),
+                            )
+                        );
+                      },
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
