@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:local_services/services/notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,12 +13,13 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  if (!kIsWeb) {
+    final notificationService = NotificationService();
+    await notificationService.initialize();
+    await notificationService.requestPermission();
+    await notificationService.showNotification();
+  }
 
-  final notificationService = NotificationService();
-
-  await notificationService.initialize();
-  await notificationService.requestPermission();
-  await notificationService.showNotification();
 
   
   FirebaseFirestore.instance.settings = const Settings(
