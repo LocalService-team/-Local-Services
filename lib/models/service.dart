@@ -1,5 +1,3 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Service {
   final String id;
   final String categoryKey;
@@ -31,33 +29,22 @@ class Service {
     this.longitude,
   });
 
-  factory Service.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+  factory Service.fromFirestore(Map<String, dynamic> data, String id) {
     return Service(
-      id: doc.id,
+      id: id,
       categoryKey: data['categoryKey'] ?? '',
-      titleEn: data['titleEn'] ?? '',
-      titleFa: data['titleFa'] ?? '',
-      titlePs: data['titlePs'] ?? '',
-      addressEn: data['addressEn'] ?? '',
-      addressFa: data['addressFa'] ?? '',
-      addressPs: data['addressPs'] ?? '',
-      rating: (data['rating'] as num?)?.toDouble() ?? 0.0,
+      titleEn: data['title_en'] ?? '',
+      titleFa: data['title_fa'] ?? '',
+      titlePs: data['title_ps'] ?? '',
+      addressEn: data['address_en'] ?? '',
+      addressFa: data['address_fa'] ?? '',
+      addressPs: data['address_ps'] ?? '',
+      rating: (data['rating'] ?? 0.0).toDouble(),
       imageUrl: data['imageUrl'] ?? '',
       phone: data['phone'] ?? '',
-      latitude: (data['latitude'] as num?)?.toDouble(),
-      longitude: (data['longitude'] as num?)?.toDouble(),
+      latitude: data['latitude']?.toDouble(),
+      longitude: data['longitude']?.toDouble(),
     );
-  }
-
-  bool matchesSearch(String query) {
-    final lowerQuery = query.toLowerCase();
-    return titleEn.toLowerCase().contains(lowerQuery) ||
-        titleFa.contains(lowerQuery) ||
-        titlePs.contains(lowerQuery) ||
-        addressEn.toLowerCase().contains(lowerQuery) ||
-        addressFa.contains(lowerQuery) ||
-        addressPs.contains(lowerQuery);
   }
 
   String getTitle(String languageCode) {
