@@ -5,9 +5,9 @@ import '../theme/app_colors.dart';
 import '../screens/service_list_screen.dart';
 import '../screens/service_detail_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
+class HomeScreen extends StatefulWidget {
+  final VoidCallback onSettingsPressed;
+  const HomeScreen({super.key,  required this.onSettingsPressed,});
   static final List<Service> allServices = [
     Service(
       id: '1',
@@ -87,6 +87,47 @@ class HomeScreen extends StatelessWidget {
   ];
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  final List<Map<String, String>> allItems = [
+    {'name_dr': 'نانوایی', 'name_en': 'bakery'},
+    {'name_dr': 'دواخانه', 'name_en': 'pharmacy'},
+    {'name_dr': 'ترانسپورت', 'name_en': 'transport'},
+    {'name_dr': 'خدمات در محل', 'name_en': 'local services'},
+  ];
+
+  List<Map<String, String>> displayedItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    displayedItems = allItems;
+  }
+
+  void _filterSearchResults(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        displayedItems = allItems;
+      });
+      return;
+    }
+
+    setState(() {
+      displayedItems = allItems.where((item) {
+        final drName = item['name_dr']!.toLowerCase();
+        final enName = item['name_en']!.toLowerCase();
+        final searchLower = query.toLowerCase();
+
+
+        return drName.contains(searchLower) || enName.contains(searchLower);
+      }).toList();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     final langCode = Localizations.localeOf(context).languageCode;
@@ -116,10 +157,13 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const CircleAvatar(
-                      backgroundColor: Colors.white24,
-                      child: Icon(Icons.person, color: Colors.white),
-                    ),
+
+            IconButton(
+            icon: const Icon(Icons.settings, color: Colors.white),
+      onPressed: widget.onSettingsPressed,
+    ),
+
+
                     const Text('خدمات محلی',
                       style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                     ),
@@ -168,9 +212,12 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 Container(
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
-                  child: const TextField(
+                  child: TextField(
                     textAlign: TextAlign.right,
-                    decoration: InputDecoration(
+                    onChanged: (value) {
+                      _filterSearchResults(value);
+                    },
+                    decoration: const InputDecoration(
                       hintText: 'جستجو...',
                       prefixIcon: Icon(Icons.search, color: Colors.grey),
                       border: InputBorder.none,
@@ -178,6 +225,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+
               ],
             ),
           ),
@@ -203,7 +251,7 @@ class HomeScreen extends StatelessWidget {
                             builder: (_) => ServiceListScreen(
                               categoryKey: cat['key'],
                               categoryLabel: cat['labelFa'],
-                              services: allServices,
+                              services: HomeScreen.allServices,
                             ),
                           ));
                         },
@@ -230,7 +278,7 @@ class HomeScreen extends StatelessWidget {
                   const Text('خدمات پیشنهادی',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
-                  ...allServices.map((service) => Container(
+                  ...HomeScreen.allServices.map((service) => Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
                       color: Colors.white,
