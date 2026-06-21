@@ -1,5 +1,4 @@
 ﻿import 'package:flutter/material.dart';
-import 'home_screen.dart';
 import 'map_screen.dart';
 import '../theme/app_colors.dart';
 
@@ -16,7 +15,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [
-      HomeScreen(onSettingsPressed: () => setState(() => index = 4)),
       const MapScreen(),
       const Center(child: Text('علاقه‌مندی‌ها', style: TextStyle(fontFamily: 'sans-serif'))),
       const Center(child: Text('پروفایل', style: TextStyle(fontFamily: 'sans-serif'))),
