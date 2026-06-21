@@ -15,6 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Service> services = [
     Service(
+      phone: '+93 700 000 000',
       id: 'bakery_01',
       categoryKey: 'serviceBakery',
       titleEn: 'Ahmads Bakery',
@@ -27,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
       imageUrl: 'https://images.unsplash.com/photo-1599307772528-187c53b3189c?w=500',
     ),
     Service(
+      phone: '+93 700 000 000',
       id: 'pharmacy_01',
       categoryKey: 'servicePharmacy',
       titleEn: 'Salam Pharmacy',
@@ -44,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final langCode = Localizations.localeOf(context).languageCode;
     final filteredServices = services.where((s) =>
-      s.getTitle(langCode).toLowerCase().contains(searchQuery.toLowerCase())
+        s.getTitle(langCode).toLowerCase().contains(searchQuery.toLowerCase())
     ).toList();
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
@@ -110,14 +112,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: filteredServices.isEmpty
                     ? const Center(child: Text('No results'))
                     : ListView.builder(
-                        itemCount: filteredServices.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: ServiceCard(service: filteredServices[index]),
-                          );
-                        },
-                      ),
+                  itemCount: filteredServices.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: ServiceCard(service: filteredServices[index]),
+                    );
+                  },
+                ),
               ),
             ],
           ),

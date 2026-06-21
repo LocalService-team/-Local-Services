@@ -1,4 +1,5 @@
 class Service {
+  final String phone;
   final String id;
   final String categoryKey;
   final String titleEn;
@@ -11,6 +12,7 @@ class Service {
   final String imageUrl;
 
   Service({
+    required this.phone,
     required this.id,
     required this.categoryKey,
     required this.titleEn,
@@ -25,6 +27,7 @@ class Service {
 
   factory Service.fromFirestore(Map<String, dynamic> data, String id) {
     return Service(
+      phone: data['phone'] ?? '',
       id: id,
       categoryKey: data['categoryKey'] ?? '',
       titleEn: data['title_en'] ?? '',
