@@ -7,7 +7,7 @@ import '../screens/home_screen.dart';
 
 class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
-  Git pull origin main
+
   @override
   Widget build(BuildContext context) {
     final services = HomeScreen.allServices

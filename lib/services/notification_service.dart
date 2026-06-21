@@ -1,12 +1,14 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
-  final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
-    Future<void> initialize() async {
-    AndroidInitializationSettings androidSettings =
+  final FlutterLocalNotificationsPlugin notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  Future<void> initialize() async {
+    const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    InitializationSettings settings = InitializationSettings(
+    const InitializationSettings settings = InitializationSettings(
       android: androidSettings,
     );
 
@@ -14,11 +16,15 @@ class NotificationService {
   }
 
   Future<void> requestPermission() async {
-    await notificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
+    await notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
   }
 
   Future<void> showNotification() async {
-    AndroidNotificationDetails androidDetails =
+    const AndroidNotificationDetails androidDetails =
     AndroidNotificationDetails(
       'daily_recommendation',
       'Daily Recommendation',
@@ -27,7 +33,7 @@ class NotificationService {
       priority: Priority.high,
     );
 
-    NotificationDetails notificationDetails =
+    const NotificationDetails notificationDetails =
     NotificationDetails(
       android: androidDetails,
     );
