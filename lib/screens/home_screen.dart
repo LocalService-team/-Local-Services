@@ -3,7 +3,7 @@ import '../models/service.dart';
 import '../theme/app_colors.dart';
 import '../screens/service_list_screen.dart';
 import '../screens/service_detail_screen.dart';
-
+import '../utils/responsive.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -89,6 +89,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     final langCode = Localizations.localeOf(context).languageCode;
+    final gridCount = Responsive.gridCount(context);
 
     final List<Map<String, dynamic>> categories = [
       {'key': 'serviceBakery', 'labelFa': 'نانوایی', 'icon': Icons.bakery_dining, 'color': const Color(0xFF8B7355)},
@@ -151,7 +152,7 @@ class HomeScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
                   GridView.count(
-                    crossAxisCount: 2,
+                    crossAxisCount: gridCount,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     crossAxisSpacing: 16,
@@ -176,10 +177,16 @@ class HomeScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(cat['icon'] as IconData, size: 48, color: cat['color'] as Color),
+                              Icon(cat['icon'] as IconData,
+                                  size: Responsive.scaleSize(
+                                  context,
+                                    mobile: 48,
+                                    tablet: 64,),
+                                  color: cat['color'] as Color),
+
                               const SizedBox(height: 12),
                               Text(cat['labelFa'],
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: cat['color'] as Color)),
+                                style: TextStyle(fontSize: Responsive.scaleFont(context, mobile: 16, tablet: 20), fontWeight: FontWeight.bold, color: cat['color'] as Color)),
                             ],
                           ),
                         ),

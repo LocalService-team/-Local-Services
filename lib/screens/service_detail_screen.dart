@@ -2,7 +2,7 @@
 import 'package:url_launcher/url_launcher.dart';
 import '../models/service.dart';
 import '../theme/app_colors.dart';
-
+import '../utils/responsive.dart';
 class ServiceDetailScreen extends StatelessWidget {
   final Service service;
 
@@ -26,7 +26,7 @@ class ServiceDetailScreen extends StatelessWidget {
                 service.imageUrl.isNotEmpty
                     ? Image.network(
                         service.imageUrl,
-                        height: 250,
+                        height: Responsive.height(context) *0.30,
                         width: double.infinity,
                         fit: BoxFit.cover,
                       )
@@ -61,8 +61,8 @@ class ServiceDetailScreen extends StatelessWidget {
                   // Title
                   Text(
                     service.getTitle(langCode),
-                    style: const TextStyle(
-                      fontSize: 26,
+                    style: TextStyle(
+                      fontSize: Responsive.scaleFont(context, mobile: 26, tablet: 32),
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.right,

@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import '../theme/app_colors.dart';
 import '../screens/service_detail_screen.dart';
 import '../screens/home_screen.dart';
+import '../utils/responsive.dart';
 
 class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
@@ -13,6 +14,7 @@ class MapScreen extends StatelessWidget {
     final services = HomeScreen.allServices
         .where((s) => s.latitude != null && s.longitude != null)
         .toList();
+    final isTablet = Responsive.isTablet(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -34,8 +36,8 @@ class MapScreen extends StatelessWidget {
             markers: services.map((service) {
               return Marker(
                 point: LatLng(service.latitude!, service.longitude!),
-                width: 120,
-                height: 70,
+                width: isTablet ? 180 : 120,
+                height: isTablet ? 90 : 70,
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(

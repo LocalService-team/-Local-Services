@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/service.dart';
 import '../theme/app_colors.dart';
 import '../screens/service_detail_screen.dart';
+import '../utils/responsive.dart';
 
 class ServiceListScreen extends StatelessWidget {
   final String? categoryKey;
@@ -54,7 +55,9 @@ class ServiceListScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     child: service.imageUrl.isNotEmpty
                         ? Image.network(service.imageUrl,
-                            width: 60, height: 60, fit: BoxFit.cover)
+                            width: Responsive.scaleSize(context, mobile: 60, tablet: 90,),
+                        height: Responsive.scaleSize(context, mobile: 60, tablet: 90),
+                        fit: BoxFit.cover)
                         : Container(
                             width: 60,
                             height: 60,
