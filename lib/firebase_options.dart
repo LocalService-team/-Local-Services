@@ -3,10 +3,9 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform, kIsWeb;
 
 class DefaultFirebaseOptions {
-  // Single currentPlatform getter — old one removed
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError('Web is not supported.');
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -20,11 +19,20 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBTJj-YTA1O4_UmOkVpRNS4IAlXHSeHCI8',
+    appId: '1:296260096493:web:a9d066551b47b4d92797e4',
+    messagingSenderId: '296260096493',
+    projectId: 'local-services-app-90c27',
+    authDomain: '://firebaseapp.com',
+    storageBucket: '://appspot.com',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBTJj-YTA1O4_UmOkVpRNS4IAlXHSeHCI8',
     appId: '1:296260096493:android:a9d066551b47b4d92797e4',
     messagingSenderId: '296260096493',
     projectId: 'local-services-app-90c27',
-    storageBucket: 'local-services-app-90c27.appspot.com',
+    storageBucket: '://appspot.com',
   );
 }
