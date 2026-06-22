@@ -12,10 +12,10 @@ class Service {
   final double rating;
   final String imageUrl;
   final String phone;
+  final double? latitude;
+  final double? longitude;
+
   Service({
-    required this.phone,
-    required this.latitude,
-    required this.longitude,
     required this.id,
     required this.categoryKey,
     required this.titleEn,
@@ -26,9 +26,11 @@ class Service {
     required this.addressPs,
     required this.rating,
     required this.imageUrl,
+    this.phone = '',
+    this.latitude,
+    this.longitude,
   });
 
-  // Single, clean factory for Firestore
   factory Service.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return Service(
