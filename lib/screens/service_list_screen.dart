@@ -4,6 +4,7 @@ import '../data/service_data.dart' as HomeScreen;
 import '../models/service.dart';
 import '../theme/app_colors.dart';
 import '../screens/service_detail_screen.dart';
+import '../utils/responsive.dart';
 
 class ServiceListScreen extends StatefulWidget {
   final String? categoryKey;

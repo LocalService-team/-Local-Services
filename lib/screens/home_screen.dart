@@ -19,9 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String _searchQuery = '';
 
   @override
-  Widget build(BuildContext context) {
-    final double statusBarHeight = MediaQuery.of(context).padding.top;
-    final langCode = Localizations.localeOf(context).languageCode;
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
     final filteredServices = ServiceData.allServices.where((service) =>
         service.matchesSearch(_searchQuery)
@@ -69,7 +68,41 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-        ],
+        ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const Text(
+                'Suggested Services',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: filteredServices.isEmpty
+                    ? const Center(child: Text('No results'))
+                    : ListView.builder(
+                        itemCount: filteredServices.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: ServiceCard(
+                              service: filteredServices[index],
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
