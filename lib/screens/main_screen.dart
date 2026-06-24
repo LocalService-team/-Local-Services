@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'home_screen.dart';
+import 'favourites_screen.dart';
 import 'map_screen.dart';
 import 'profile_screen.dart';
 import '../data/service_data.dart';
@@ -20,7 +21,7 @@ class _MainScreenState extends State<MainScreen> {
     final pages = [
       const HomeScreen(),
       MapScreen(services: ServiceData.allServices),
-      const Center(child: Text('علاقه‌مندی‌ها - Coming Soon')),
+      const FavouritesScreen(),
       ProfileScreen(
         onLocaleChange: (locale) {
           MyApp.of(context)?.setLocale(locale);
