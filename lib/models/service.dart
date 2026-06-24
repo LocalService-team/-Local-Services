@@ -1,6 +1,6 @@
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Service {
-  final double? latitude;
-  final double? longitude;
   final String id;
   final String categoryKey;
   final String titleEn;
@@ -12,10 +12,10 @@ class Service {
   final double rating;
   final String imageUrl;
   final String phone;
+  final double? latitude;
+  final double? longitude;
+
   Service({
-    required this.phone,
-    required this.latitude,
-    required this.longitude,
     required this.id,
     required this.categoryKey,
     required this.titleEn,
@@ -26,24 +26,38 @@ class Service {
     required this.addressPs,
     required this.rating,
     required this.imageUrl,
+    this.phone = '',
+    this.latitude,
+    this.longitude,
   });
 
-  factory Service.fromFirestore(Map<String, dynamic> data, String id) {
+  factory Service.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return Service(
-      phone: '',
-      latitude: 34.5253,
-      longitude: 69.1783,
-      id: id,
+      id: doc.id,
       categoryKey: data['categoryKey'] ?? '',
-      titleEn: data['title_en'] ?? '',
-      titleFa: data['title_fa'] ?? '',
-      titlePs: data['title_ps'] ?? '',
-      addressEn: data['address_en'] ?? '',
-      addressFa: data['address_fa'] ?? '',
-      addressPs: data['address_ps'] ?? '',
-      rating: (data['rating'] ?? 0.0).toDouble(),
+      titleEn: data['titleEn'] ?? '',
+      titleFa: data['titleFa'] ?? '',
+      titlePs: data['titlePs'] ?? '',
+      addressEn: data['addressEn'] ?? '',
+      addressFa: data['addressFa'] ?? '',
+      addressPs: data['addressPs'] ?? '',
+      rating: (data['rating'] as num?)?.toDouble() ?? 0.0,
       imageUrl: data['imageUrl'] ?? '',
+      phone: data['phone'] ?? '',
+      latitude: (data['latitude'] as num?)?.toDouble(),
+      longitude: (data['longitude'] as num?)?.toDouble(),
     );
+  }
+
+  bool matchesSearch(String query) {
+    final lowerQuery = query.toLowerCase();
+    return titleEn.toLowerCase().contains(lowerQuery) ||
+        titleFa.contains(lowerQuery) ||
+        titlePs.contains(lowerQuery) ||
+        addressEn.toLowerCase().contains(lowerQuery) ||
+        addressFa.contains(lowerQuery) ||
+        addressPs.contains(lowerQuery);
   }
 
   String getTitle(String languageCode) {
