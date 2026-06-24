@@ -17,6 +17,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     return notifications.where((n) => !n.isRead).length;
   }
 
+  Future<void> deleteNotification(AppNotification notification) async {
+    await FirebaseFirestore.instance
+        .collection('notifications')
+        .doc(notification.id)
+        .delete();
+  }
+
   void listenToNotifications() {
     FirebaseFirestore.instance.collection('notifications').snapshots().listen((
       snapshot,
@@ -110,7 +117,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Notifications ($firebaseNotificationCount)')),
+      appBar: AppBar(title: Text('Notifications')),
       body: Builder(
         builder: (context) {
           if (notifications.isEmpty) {
@@ -141,14 +148,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               final notification = notifications[index];
 
               return Dismissible(
-                key: ValueKey(
-                  notification.title + notification.createdAt.toString(),
-                ),
+                key: ValueKey(notification.id),
                 direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-                  setState(() {
-                    notifications.removeAt(index);
-                  });
+                onDismissed: (direction) async {
+                  await deleteNotification(notification);
                 },
                 background: Container(
                   margin: const EdgeInsets.symmetric(
