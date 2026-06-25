@@ -5,6 +5,7 @@ import 'map_screen.dart';
 import 'profile_screen.dart';
 import '../data/service_data.dart';
 import '../main.dart';
+import '../theme/app_theme.dart'; // 1. Import your theme file
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,8 +16,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-
-  // استفاده از لیست صفحات به عنوان متغیر برای ثبات بیشتر
   late final List<Widget> _pages;
 
   @override
@@ -35,7 +34,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // استفاده از IndexedStack برای اینکه وضعیت صفحات هنگام جابجایی پاک نشود
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
@@ -43,7 +41,8 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
-        selectedItemColor: const Color(0xFF2D6A4F),
+        // 2. Re-applied your theme color from 22/06
+        selectedItemColor: AppTheme.homeTeal,
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
         items: [
