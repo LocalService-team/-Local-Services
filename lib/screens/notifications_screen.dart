@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/app_notification.dart';
 
@@ -9,28 +10,52 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  final List<AppNotification> notifications = [
-    AppNotification(
-      title: 'Welcome to Local Services',
-      message: 'Find nearby services easily',
-      createdAt: DateTime.now(),
-      isRead: false,
-    ),
+  int firebaseNotificationCount = 0;
+  List<AppNotification> notifications = [];
 
-    AppNotification(
-      title: 'New Pharmacies Discovered',
-      message: 'Check pharmacies near your location',
-      createdAt: DateTime.now(),
-      isRead: false,
-    ),
+  int get unreadCount {
+    return notifications.where((n) => !n.isRead).length;
+  }
 
-    AppNotification(
-      title: 'Nearby Hospital Available',
-      message: 'View hospitals in your area',
-      createdAt: DateTime.now(),
-      isRead: true,
-    ),
-  ];
+  Future<void> deleteNotification(AppNotification notification) async {
+    await FirebaseFirestore.instance
+        .collection('notifications')
+        .doc(notification.id)
+        .delete();
+  }
+
+  void listenToNotifications() {
+    FirebaseFirestore.instance.collection('notifications').snapshots().listen((
+      snapshot,
+    ) {
+      notifications.clear();
+
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+
+        notifications.add(
+          AppNotification(
+            id: doc.id,
+            title: data['title'],
+            message: data['message'],
+            isRead: data['isRead'],
+            createdAt: data['createdAt'].toDate(),
+          ),
+        );
+      }
+
+      setState(() {
+        firebaseNotificationCount = snapshot.docs.length;
+      });
+    });
+  }
+
+  Future<void> markAsRead(AppNotification notification) async {
+    await FirebaseFirestore.instance
+        .collection('notifications')
+        .doc(notification.id)
+        .update({'isRead': true});
+  }
 
   String getTimeAgo(DateTime dateTime) {
     final difference = DateTime.now().difference(dateTime);
@@ -54,10 +79,45 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     return '${difference.inDays} days ago';
   }
 
+  Future<void> testFirestore() async {
+    notifications.clear();
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('notifications')
+        .get();
+
+    setState(() {
+      firebaseNotificationCount = snapshot.docs.length;
+    });
+
+    print('Documents found: ${snapshot.docs.length}');
+
+    for (final doc in snapshot.docs) {
+      final data = doc.data();
+
+      notifications.add(
+        AppNotification(
+          id: doc.id,
+          title: data['title'],
+          message: data['message'],
+          isRead: data['isRead'],
+          createdAt: data['createdAt'].toDate(),
+        ),
+      );
+    }
+
+    setState(() {});
+  }
+
   @override
+  void initState() {
+    super.initState();
+    listenToNotifications();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Notifications')),
+      appBar: AppBar(title: Text('Notifications')),
       body: Builder(
         builder: (context) {
           if (notifications.isEmpty) {
@@ -88,14 +148,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               final notification = notifications[index];
 
               return Dismissible(
-                key: ValueKey(
-                  notification.title + notification.createdAt.toString(),
-                ),
+                key: ValueKey(notification.id),
                 direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-                  setState(() {
-                    notifications.removeAt(index);
-                  });
+                onDismissed: (direction) async {
+                  await deleteNotification(notification);
                 },
                 background: Container(
                   margin: const EdgeInsets.symmetric(
@@ -111,10 +167,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   child: const Icon(Icons.delete, color: Colors.white),
                 ),
                 child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      notification.isRead = true;
-                    });
+                  onTap: () async {
+                    if (!notification.isRead) {
+                      await markAsRead(notification);
+                    }
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(

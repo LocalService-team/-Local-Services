@@ -17,9 +17,8 @@ class NotificationService {
 
   Future<void> requestPermission() async {
     await notificationsPlugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
+        .resolvePlatformSpecificImplementation;
+          AndroidFlutterLocalNotificationsPlugin()
         ?.requestNotificationsPermission();
   }
 

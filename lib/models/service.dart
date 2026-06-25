@@ -29,7 +29,10 @@ class Service {
     this.longitude,
   });
 
-  factory Service.fromFirestore(Map<String, dynamic> data, String id) {
+  factory Service.fromFirestore(
+      Map<String, dynamic> data,
+      String id,
+      ) {
     return Service(
       id: id,
       categoryKey: data['categoryKey'] ?? '',
@@ -47,19 +50,33 @@ class Service {
     );
   }
 
+  bool matchesSearch(String query) {
+    query = query.toLowerCase();
+
+    return titleEn.toLowerCase().contains(query) ||
+        titleFa.toLowerCase().contains(query) ||
+        titlePs.toLowerCase().contains(query);
+  }
+
   String getTitle(String languageCode) {
     switch (languageCode) {
-      case 'fa': return titleFa;
-      case 'ps': return titlePs;
-      default: return titleEn;
+      case 'fa':
+        return titleFa;
+      case 'ps':
+        return titlePs;
+      default:
+        return titleEn;
     }
   }
 
   String getAddress(String languageCode) {
     switch (languageCode) {
-      case 'fa': return addressFa;
-      case 'ps': return addressPs;
-      default: return addressEn;
+      case 'fa':
+        return addressFa;
+      case 'ps':
+        return addressPs;
+      default:
+        return addressEn;
     }
   }
 }

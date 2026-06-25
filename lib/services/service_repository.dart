@@ -4,10 +4,14 @@ import '../models/service.dart';
 class ServiceRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // This stream will keep your UI updated automatically when data changes in Firestore
   Stream<List<Service>> getServices() {
     return _firestore.collection('services').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => Service.fromFirestore(doc)).toList();
+      return snapshot.docs.map((doc) {
+        return Service.fromFirestore(
+          doc.data(),
+          doc.id,
+        );
+      }).toList();
     });
   }
 }

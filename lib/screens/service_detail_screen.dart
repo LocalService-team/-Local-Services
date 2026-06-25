@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import '../models/service.dart';
+import '../services/favourites_service.dart';
 
 class ServiceDetailScreen extends StatelessWidget {
   final Service service;
