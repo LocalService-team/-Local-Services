@@ -18,7 +18,7 @@ class ServiceCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color:Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -82,7 +82,7 @@ class ServiceCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      service.categoryKey, // ✅ using categoryKey
+                      service.categoryKey, // using categoryKey
                       style: const TextStyle(
                         color: Color(0xFF047857),
                         fontSize: 12,
@@ -96,8 +96,8 @@ class ServiceCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            service.getAddress(langCode), // ✅ multilingual address
-            style: const TextStyle(color: AppColors.textSub),
+            service.getAddress(langCode), //  multilingual address
+            style: TextStyle(color: Colors.grey.shade600),
           ),
           const SizedBox(height: 18),
           Row(
@@ -105,7 +105,7 @@ class ServiceCard extends StatelessWidget {
               Expanded(
                 child: FilledButton.icon(
                   style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primaryAccent,
+                    backgroundColor: AppColors.homeHeader,
                   ),
                   onPressed: () {},
                   icon: const Icon(Icons.call, color: Colors.white),
@@ -116,7 +116,7 @@ class ServiceCard extends StatelessWidget {
               Expanded(
                 child: FilledButton.icon(
                   style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.secondaryTeal,
+                    backgroundColor: AppColors.servicesHeader,
                   ),
                   onPressed: () {
                     Navigator.push(

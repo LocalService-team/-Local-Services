@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
+
   static const Color homeTeal = Color(0xFF005A60);
   static const Color servicesPurple = Color(0xFF621B66);
   static const Color detailGreen = Color(0xFF4E7043);
@@ -9,10 +10,10 @@ class AppTheme {
   static const Color backgroundLight = Color(0xFFE3EAE7);
   static const Color cardLight = Color(0xFFFFFFFF);
 
-  static const Color catBakery = Color(0xFF909A6B);
-  static const Color catMedical = Color(0xFF83B4B7);
-  static const Color catTransport = Color(0xFFE5E9E8);
-  static const Color catHomeServices = Color(0xFFF1A64A);
+  static const Color catBakery = Color(0xFF7D8F5A);
+  static const Color catMedical = Color(0xFF5B9EA0);
+  static const Color catTransport = Color(0xFFD4A853);
+  static const Color catHomeServices = Color(0xFFE8855A);
 
   static ThemeData get lightTheme {
     return ThemeData(

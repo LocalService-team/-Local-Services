@@ -43,10 +43,10 @@ class _MyAppState extends State<MyApp> {
       title: 'Local Services',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      home: const MainScreen(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: _locale,
-      home: const WelcomeScreen(),
     );
   }
 }

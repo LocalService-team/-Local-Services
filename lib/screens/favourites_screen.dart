@@ -44,7 +44,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F0),
       appBar: AppBar(
-        backgroundColor: AppColors.primaryTeal,
+        backgroundColor: AppColors.servicesHeader,
         title: const Text('علاقه‌مندی‌ها', style: TextStyle(color: Colors.white)),
         automaticallyImplyLeading: false,
       ),
@@ -115,7 +115,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                                 ));
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryTeal,
+                                backgroundColor: AppColors.servicesHeader,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8)),
                               ),

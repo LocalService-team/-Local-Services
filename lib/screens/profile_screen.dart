@@ -17,10 +17,10 @@ class ProfileScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 20),
               // Avatar
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 50,
-                backgroundColor: AppColors.primaryTeal,
-                child: Icon(Icons.person, size: 60, color: Colors.white),
+                backgroundColor: AppColors.homeHeader,
+                child: const Icon(Icons.person, size: 60, color: Colors.white),
               ),
               const SizedBox(height: 16),
               const Text('کاربر مهمان',
@@ -91,7 +91,7 @@ class ProfileScreen extends StatelessWidget {
       leading: Text(flag, style: const TextStyle(fontSize: 24)),
       title: Text(label),
       trailing: isSelected
-          ? const Icon(Icons.check_circle, color: AppColors.primaryTeal)
+          ? Icon(Icons.check_circle, color: AppColors.homeHeader)
           : const Icon(Icons.circle_outlined, color: Colors.grey),
       onTap: () => onLocaleChange(Locale(code)),
     );
@@ -99,7 +99,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _infoTile(IconData icon, String title, String subtitle) {
     return ListTile(
-      leading: Icon(icon, color: AppColors.primaryTeal),
+      leading: Icon(icon, color: AppColors.homeHeader),
       title: Text(title),
       subtitle: Text(subtitle),
     );

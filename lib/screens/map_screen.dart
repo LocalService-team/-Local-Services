@@ -56,7 +56,7 @@ class _MapScreenState extends State<MapScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryTeal,
+                            color: AppColors.homeHeader,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(

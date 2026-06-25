@@ -1,8 +1,11 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import '../data/service_data.dart';
+import '../models/service.dart';
 import '../theme/app_colors.dart';
 import '../screens/service_list_screen.dart';
 import '../screens/service_detail_screen.dart';
+import 'notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,9 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Container(
             padding: EdgeInsets.fromLTRB(20, statusBarHeight + 20, 20, 20),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.primaryTeal,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(24),
                 bottomRight: Radius.circular(24),
               ),
@@ -54,7 +57,60 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const Text('خدمات محلی',
                       style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                    const Icon(Icons.notifications_none, color: Colors.white, size: 28),
+                    IconButton(
+                      icon: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          const Icon(
+                            Icons.notifications_none,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+
+                          Positioned(
+                            right: -6,
+                            top: -6,
+                            child: StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('notifications')
+                                  .where('isRead', isEqualTo: false)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                final count = snapshot.data?.docs.length ?? 0;
+
+                                if (count == 0) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                return Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    count.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => NotificationsScreen(),
+                            )
+                        );
+                      },
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),

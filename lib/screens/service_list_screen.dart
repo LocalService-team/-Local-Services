@@ -40,8 +40,9 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.primaryTeal,
+        backgroundColor: AppColors.homeBackground,
+        appBar: AppBar(
+          backgroundColor: AppColors.homeHeader,
         title: Text(
           widget.categoryLabel ?? 'خدمات',
           style: const TextStyle(color: Colors.white),
@@ -120,7 +121,7 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryTeal,
+                        backgroundColor: AppColors.homeHeader,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
