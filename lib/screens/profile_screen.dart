@@ -3,9 +3,7 @@ import '../theme/app_colors.dart';
 
 class ProfileScreen extends StatelessWidget {
   final Function(Locale) onLocaleChange;
-
   const ProfileScreen({super.key, required this.onLocaleChange});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,27 +14,32 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 20),
-              // Avatar
               const CircleAvatar(
                 radius: 50,
                 backgroundColor: AppColors.primaryTeal,
                 child: Icon(Icons.person, size: 60, color: Colors.white),
               ),
               const SizedBox(height: 16),
-              const Text('کاربر مهمان',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const Text(
+                'کاربر مهمان',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 4),
-              const Text('guest@localservices.af',
-                style: TextStyle(color: Colors.grey)),
+              const Text(
+                'guest@localservices.af',
+                style: TextStyle(color: Colors.grey),
+              ),
               const SizedBox(height: 32),
-
-              // Language Section
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: const [
-                    BoxShadow(blurRadius: 8, color: Colors.black12, offset: Offset(0, 2)),
+                    BoxShadow(
+                      blurRadius: 8,
+                      color: Colors.black12,
+                      offset: Offset(0, 2),
+                    ),
                   ],
                 ),
                 child: Column(
@@ -44,8 +47,13 @@ class ProfileScreen extends StatelessWidget {
                   children: [
                     const Padding(
                       padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                      child: Text('زبان / Language',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      child: Text(
+                        'زبان / Language',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
                     const Divider(height: 1),
                     _languageTile(context, 'English', 'en', '🇬🇧'),
@@ -57,14 +65,16 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-
-              // App Info Section
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: const [
-                    BoxShadow(blurRadius: 8, color: Colors.black12, offset: Offset(0, 2)),
+                    BoxShadow(
+                      blurRadius: 8,
+                      color: Colors.black12,
+                      offset: Offset(0, 2),
+                    ),
                   ],
                 ),
                 child: Column(
@@ -83,8 +93,12 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget _languageTile(BuildContext context, String label, String code, String flag) {
+  Widget _languageTile(
+    BuildContext context,
+    String label,
+    String code,
+    String flag,
+  ) {
     final current = Localizations.localeOf(context).languageCode;
     final isSelected = current == code;
     return ListTile(
