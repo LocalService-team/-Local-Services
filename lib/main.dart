@@ -1,7 +1,7 @@
-﻿import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Added for Auth
 import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/main_screen.dart';
@@ -43,7 +43,22 @@ class _MyAppState extends State<MyApp> {
       title: 'Local Services',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const MainScreen(),
+      // Use a StreamBuilder to decide which screen to show
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          // If the connection is waiting, show a loading spinner
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          }
+          // If the user has data, they are logged in -> go to MainScreen
+          if (snapshot.hasData) {
+            return const MainScreen();
+          }
+          // Otherwise, show the WelcomeScreen
+          return const WelcomeScreen();
+        },
+      ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: _locale,
