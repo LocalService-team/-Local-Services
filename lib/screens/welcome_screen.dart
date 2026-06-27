@@ -2,14 +2,12 @@
 import 'login_screen.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_colors.dart';
-
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // ✅ پس‌زمینه سفید
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
@@ -17,8 +15,6 @@ class WelcomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-
-              // لوگو با رنگ سبز
               Center(
                 child: Container(
                   padding: const EdgeInsets.all(24),
@@ -46,26 +42,23 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-
               const Text(
                 'خدمات محلی',
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
-                  color: Colors.teal, // ✅ رنگ سبز
+                  color: Colors.teal,
                 ),
               ),
               const SizedBox(height: 8),
-
               const Text(
                 'Local Services Kabul',
                 style: TextStyle(
                   fontSize: 18,
-                  color: Colors.teal, // ✅ رنگ سبز
+                  color: Colors.teal,
                 ),
               ),
               const SizedBox(height: 16),
-
               const Text(
                 'Find trusted local services\nin your neighbourhood',
                 textAlign: TextAlign.center,

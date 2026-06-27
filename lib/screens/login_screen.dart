@@ -48,7 +48,6 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = false);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +58,6 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Premium Logo Section
               Center(
                 child: Container(
                   padding: const EdgeInsets.all(24),
@@ -87,8 +85,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-
-              // Title Section
               Text(
                 _isLogin ? 'Welcome Back!' : 'Create Account',
                 textAlign: TextAlign.center,
@@ -113,8 +109,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-
-              // Email Field
               _buildTextField(
                 controller: _emailController,
                 label: 'Email Address',
@@ -122,8 +116,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 18),
-
-              // Password Field
               _buildTextField(
                 controller: _passwordController,
                 label: 'Password',
@@ -179,10 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ],
-
               const SizedBox(height: 30),
-
-              // Main Action Button
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -230,10 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                 ),
               ),
-
               const SizedBox(height: 16),
-
-              // Toggle Auth Mode
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -259,10 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 20),
-
-              // Divider
               Row(
                 children: [
                   Expanded(
@@ -291,10 +274,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 20),
-
-              // Guest Button
               OutlinedButton.icon(
                 onPressed: () => Navigator.pushReplacement(
                   context,
@@ -324,7 +304,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
