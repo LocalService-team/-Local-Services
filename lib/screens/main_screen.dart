@@ -22,6 +22,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return StreamBuilder<List<Service>>(
       stream: _repository.getServices(),
       builder: (context, snapshot) {
@@ -37,43 +39,48 @@ class _MainScreenState extends State<MainScreen> {
         ];
 
         return Scaffold(
-          extendBody: true,
-          body: Padding(
-            padding: const EdgeInsets.only(bottom: 80),
-            child: IndexedStack(
-              index: _currentIndex,
-              children: pages,
-            ),
-          ),
-          bottomNavigationBar: SafeArea(
-            child: Container(
-              margin: const EdgeInsets.fromLTRB(24, 0, 24, 12),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.96),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primaryTeal.withValues(alpha: 0.12),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
+          body: Stack(
+            children: [
+              // Pages with bottom padding to avoid nav bar overlap
+              IndexedStack(
+                index: _currentIndex,
+                children: pages,
+              ),
+
+              // Floating nav bar at bottom
+              Positioned(
+                bottom: bottomPadding + 12,
+                left: 24,
+                right: 24,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.96),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryTeal.withValues(alpha: 0.12),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                    border: Border.all(
+                      color: AppColors.primaryTeal.withValues(alpha: 0.08),
+                      width: 1,
+                    ),
                   ),
-                ],
-                border: Border.all(
-                  color: AppColors.primaryTeal.withValues(alpha: 0.08),
-                  width: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildNavItem(Icons.home_rounded, 'خانه', 0),
+                      _buildNavItem(Icons.map_rounded, 'نقشه', 1),
+                      _buildNavItem(Icons.favorite_rounded, 'علاقه‌مندی', 2),
+                      _buildNavItem(Icons.person_rounded, 'پروفایل', 3),
+                    ],
+                  ),
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildNavItem(Icons.home_rounded, 'خانه', 0),
-                  _buildNavItem(Icons.map_rounded, 'نقشه', 1),
-                  _buildNavItem(Icons.favorite_rounded, 'علاقه‌مندی', 2),
-                  _buildNavItem(Icons.person_rounded, 'پروفایل', 3),
-                ],
-              ),
-            ),
+            ],
           ),
         );
       },
@@ -124,3 +131,4 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
+

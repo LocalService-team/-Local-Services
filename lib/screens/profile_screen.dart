@@ -11,9 +11,8 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F0),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
           child: Column(
             children: [
               const SizedBox(height: 20),
@@ -103,8 +102,7 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
+        );
   }
 
   Widget _languageTile(BuildContext context, String label, String code, String flag) {
