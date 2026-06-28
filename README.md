@@ -1,64 +1,76 @@
 ﻿# Local Services App
 
-A Flutter mobile application that helps users in Kabul, Afghanistan find local services such as plumbers, electricians, and cleaners. The app supports three languages: English, Dari (دری), and Pashto (پښتو).
+A Flutter mobile application that helps users in Kabul, Afghanistan find local services such as plumbers, electricians, cleaners, bakeries, pharmacies, and transport. The app supports three languages: English, Dari (دری), and Pashto (پښتو).
 
 ## Features
-- Browse local services in Kabul
-- Search for services by name or category
-- View service details including rating, address, and contact
+
+- Browse local services in Kabul by category
+- Search for services by name or address
+- View service details including rating, phone, and address
+- Call a service directly from the app
+- Save favourite services
+- Interactive map showing service locations
 - Multilingual support: English, Dari, and Pashto
+- Firebase Authentication (login, register, guest access)
 - Real-time data powered by Firebase Firestore
-- Clean, modern UI with bottom navigation
+- Push notifications support
+- Clean, modern UI with animated bottom navigation
 
 ## Tech Stack
+
 - Flutter / Dart
 - Firebase Firestore (real-time database)
+- Firebase Authentication
 - Firebase Core
+- Flutter Map (OpenStreetMap)
+- Shared Preferences (favourites)
 - Flutter Localizations (intl)
-- Google Fonts
+- URL Launcher
 
 ## Screens
-- **Home** — Browse and search services
-- **Service Detail** — View full details of a service
-- **Map** — Location view (placeholder)
-- **Favourites** — Saved services (placeholder)
-- **Profile** — User profile (placeholder)
+
+- **Welcome** — App introduction and get started
+- **Login / Register** — Firebase Auth with guest access
+- **Home** — Browse categories and search services
+- **Map** — Interactive map with nearby and favourite tabs
+- **Service List** — Filtered services by category
+- **Service Detail** — Full details with call button
+- **Favourites** — Saved services
+- **Profile** — Language switcher and logout
+- **Notifications** — App notifications
 
 ## Languages Supported
+
 | Language | Code |
-|---|---|
-| English | en |
-| Dari | fa |
-| Pashto | ps |
+|----------|------|
+| English  | en   |
+| Dari     | fa   |
+| Pashto   | ps   |
 
 ## How to Run
-1. Clone the repository:git clone https://github.com/LocalService-team/-Local-Services.git
-2. Install dependencies:
-flutter pub get
-3. Run the app:
-flutter run
 
-## Team Contributions
-| Team Member | Feature | Branch |
-|---|---|---|
-| Latifa | Home UI | feature/home-ui |
-| Sharifa | Service List Page | feature/service-list-ui |
-| Marwa | Service Detail Screen | feature/service-detail-ui |
-| Marwa Hashimi | Widgets | feature/ui-widgets |
-| Eshwa | Theme | feature/theme |
-| Wazhma | Navigation | feature/navigation |
-| Elham | Responsive UI | feature/responsive-ui |
-| Zakia | UI Fixes | feature/ui-fixes |
+1. Clone the repository:
+```bash
+   git clone https://github.com/LocalService-team/-Local-Services.git
+```
+2. Install dependencies:
+```bash
+   flutter pub get
+```
+3. Run the app:
+```bash
+   flutter run
+```
 
 ## Project Structure
+
+```
 lib/
-
+├── data/          # Local service data
 ├── l10n/          # Localisation files (en, fa, ps)
-
 ├── models/        # Data models
-
 ├── screens/       # App screens
-
+├── services/      # Firebase and local services
 ├── theme/         # App colours and theme
-
 └── widgets/       # Reusable widgets
+```
