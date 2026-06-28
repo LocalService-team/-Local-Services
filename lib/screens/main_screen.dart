@@ -42,7 +42,7 @@ class _MainScreenState extends State<MainScreen> {
           body: Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.only(bottom: 100),
+                padding: const EdgeInsets.only(bottom: 140),
                 child: IndexedStack(
                   index: _currentIndex,
                   children: pages,

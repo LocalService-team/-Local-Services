@@ -7,7 +7,7 @@ class ServiceRepository {
 
   Stream<List<Service>> getServices() {
     return _firestore.collection('service').snapshots().map((snapshot) {
-      if (snapshot.docs.isEmpty) {
+      if (snapshot.docs.length < 10) {
         return ServiceData.allServices;
       }
       return snapshot.docs.map((doc) {

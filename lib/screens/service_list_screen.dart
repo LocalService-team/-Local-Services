@@ -28,7 +28,7 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
   @override
   Widget build(BuildContext context) {
     final langCode = Localizations.localeOf(context).languageCode;
-    final allServices = (widget.services == null || widget.services!.isEmpty)
+    final allServices = (widget.services == null || widget.services!.length < 10)
         ? HomeScreen.ServiceData.allServices
         : widget.services!;
 
