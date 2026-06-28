@@ -1,6 +1,5 @@
 ﻿import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../data/service_data.dart';
 import '../models/service.dart';
 import '../theme/app_colors.dart';
 import '../screens/service_list_screen.dart';
@@ -8,7 +7,8 @@ import '../screens/service_detail_screen.dart';
 import 'notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final List<Service> services;
+  const HomeScreen({super.key, required this.services});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -29,8 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final langCode = Localizations.localeOf(context).languageCode;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
-    final filteredServices = ServiceData.allServices.where((service) =>
-      service.matchesSearch(_searchQuery)
+    final filteredServices = widget.services.where((service) =>
+        service.matchesSearch(_searchQuery)
     ).toList();
 
     return Scaffold(
@@ -56,17 +56,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Icon(Icons.person, color: Colors.white),
                     ),
                     const Text('خدمات محلی',
-                      style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+                        style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
                     IconButton(
                       icon: Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          const Icon(
-                            Icons.notifications_none,
-                            color: Colors.white,
-                            size: 28,
-                          ),
-
+                          const Icon(Icons.notifications_none, color: Colors.white, size: 28),
                           Positioned(
                             right: -6,
                             top: -6,
@@ -77,39 +72,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                   .snapshots(),
                               builder: (context, snapshot) {
                                 final count = snapshot.data?.docs.length ?? 0;
-
-                                if (count == 0) {
-                                  return const SizedBox.shrink();
-                                }
-
+                                if (count == 0) return const SizedBox.shrink();
                                 return Container(
                                   padding: const EdgeInsets.all(4),
                                   decoration: const BoxDecoration(
                                     color: Colors.red,
                                     shape: BoxShape.circle,
                                   ),
-                                  child: Text(
-                                    count.toString(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                                  child: Text(count.toString(),
+                                      style: const TextStyle(color: Colors.white, fontSize: 10,
+                                          fontWeight: FontWeight.bold)),
                                 );
                               },
                             ),
                           ),
                         ],
                       ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => NotificationsScreen(),
-                            )
-                        );
-                      },
+                      onPressed: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => NotificationsScreen())),
                     ),
                   ],
                 ),
@@ -140,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   const Text('دسته‌بندی‌ها',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
                   GridView.count(
                     crossAxisCount: 2,
@@ -155,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (_) => ServiceListScreen(
                               categoryKey: cat['key'],
                               categoryLabel: cat['labelFa'],
-                              services: ServiceData.allServices,
+                              services: widget.services,
                             ),
                           ));
                         },
@@ -173,8 +153,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               Icon(cat['icon'] as IconData, size: 48, color: cat['color'] as Color),
                               const SizedBox(height: 12),
                               Text(cat['labelFa'],
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
-                                  color: cat['color'] as Color)),
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
+                                      color: cat['color'] as Color)),
                             ],
                           ),
                         ),
@@ -183,54 +163,57 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 24),
                   const Text('خدمات پیشنهادی',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
-                  ...filteredServices.map((service) => Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: const [
-                        BoxShadow(blurRadius: 8, color: Colors.black12, offset: Offset(0, 2)),
-                      ],
-                    ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(12),
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: service.imageUrl.isNotEmpty
-                            ? Image.network(service.imageUrl,
-                                width: 60, height: 60, fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Container(
-                                  width: 60, height: 60,
-                                  color: Colors.grey.shade200,
-                                  child: const Icon(Icons.build),
-                                ))
-                            : Container(width: 60, height: 60,
+                  if (filteredServices.isEmpty)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    ...filteredServices.map((service) => Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: const [
+                          BoxShadow(blurRadius: 8, color: Colors.black12, offset: Offset(0, 2)),
+                        ],
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(12),
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: service.imageUrl.isNotEmpty
+                              ? Image.network(service.imageUrl,
+                              width: 60, height: 60, fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                width: 60, height: 60,
                                 color: Colors.grey.shade200,
-                                child: const Icon(Icons.build)),
-                      ),
-                      title: Text(service.getTitle(langCode),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.right),
-                      subtitle: Text(service.getAddress(langCode),
-                        textAlign: TextAlign.right,
-                        style: const TextStyle(fontSize: 12)),
-                      trailing: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (_) => ServiceDetailScreen(service: service),
-                          ));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryTeal,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
+                                child: const Icon(Icons.build),
+                              ))
+                              : Container(width: 60, height: 60,
+                              color: Colors.grey.shade200,
+                              child: const Icon(Icons.build)),
                         ),
-                        child: const Text('مشاهده', style: TextStyle(color: Colors.white)),
+                        title: Text(service.getTitle(langCode),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.right),
+                        subtitle: Text(service.getAddress(langCode),
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(fontSize: 12)),
+                        trailing: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (_) => ServiceDetailScreen(service: service),
+                            ));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryTeal,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          child: const Text('مشاهده', style: TextStyle(color: Colors.white)),
+                        ),
                       ),
-                    ),
-                  )),
+                    )),
                 ],
               ),
             ),

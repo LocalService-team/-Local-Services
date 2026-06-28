@@ -71,7 +71,7 @@ class ServiceCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    service.getTitle(langCode), // ✅ multilingual title
+                    service.getTitle(langCode), //  multilingual title
                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 6),

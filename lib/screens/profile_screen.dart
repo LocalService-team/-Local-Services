@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../theme/app_colors.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -16,18 +17,21 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 20),
-              // Avatar
               CircleAvatar(
                 radius: 50,
                 backgroundColor: AppColors.homeHeader,
                 child: const Icon(Icons.person, size: 60, color: Colors.white),
               ),
               const SizedBox(height: 16),
-              const Text('کاربر مهمان',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              Text(
+                FirebaseAuth.instance.currentUser?.displayName ?? 'کاربر مهمان',
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 4),
-              const Text('guest@localservices.af',
-                style: TextStyle(color: Colors.grey)),
+              Text(
+                FirebaseAuth.instance.currentUser?.email ?? 'guest@localservices.af',
+                style: const TextStyle(color: Colors.grey),
+              ),
               const SizedBox(height: 32),
 
               // Language Section
@@ -45,7 +49,7 @@ class ProfileScreen extends StatelessWidget {
                     const Padding(
                       padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                       child: Text('زبان / Language',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     ),
                     const Divider(height: 1),
                     _languageTile(context, 'English', 'en', '🇬🇧'),
@@ -75,6 +79,25 @@ class ProfileScreen extends StatelessWidget {
                     const Divider(height: 1),
                     _infoTile(Icons.phone, 'پشتیبانی', '0700000000'),
                   ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Logout Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  label: const Text('خروج', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut();
+                  },
                 ),
               ),
             ],

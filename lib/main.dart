@@ -1,7 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Added for Auth
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/main_screen.dart';
