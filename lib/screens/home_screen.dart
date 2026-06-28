@@ -1,5 +1,4 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../models/service.dart';
 import '../theme/app_colors.dart';
 import '../screens/service_list_screen.dart';
@@ -8,13 +7,17 @@ import 'notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Service> services;
-  const HomeScreen({super.key, required this.services});
+  final double bottomPadding;
+  const HomeScreen({super.key,
+    required this.services,
+    this.bottomPadding = 100.0,});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Changed from final so it can be updated by the TextField
   String _searchQuery = '';
 
   final List<Map<String, dynamic>> categories = [
@@ -27,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final langCode = Localizations.localeOf(context).languageCode;
-    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    final statusBarHeight = MediaQuery.of(context).padding.top;
 
     final filteredServices = widget.services.where((service) =>
         service.matchesSearch(_searchQuery)
@@ -58,38 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Text('خدمات محلی',
                         style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
                     IconButton(
-                      icon: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          const Icon(Icons.notifications_none, color: Colors.white, size: 28),
-                          Positioned(
-                            right: -6,
-                            top: -6,
-                            child: StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection('notifications')
-                                  .where('isRead', isEqualTo: false)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                final count = snapshot.data?.docs.length ?? 0;
-                                if (count == 0) return const SizedBox.shrink();
-                                return Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Text(count.toString(),
-                                      style: const TextStyle(color: Colors.white, fontSize: 10,
-                                          fontWeight: FontWeight.bold)),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                      icon: const Icon(Icons.notifications_none, color: Colors.white, size: 28),
                       onPressed: () => Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => NotificationsScreen())),
+                          MaterialPageRoute(builder: (_) => const NotificationsScreen())),
                     ),
                   ],
                 ),
@@ -101,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: TextField(
                     textAlign: TextAlign.right,
+                    // Updated to actually set the state
                     onChanged: (value) => setState(() => _searchQuery = value),
                     decoration: const InputDecoration(
                       hintText: 'جستجو...',
@@ -115,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+              padding: EdgeInsets.fromLTRB(20, 20, 20, widget.bottomPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -166,8 +141,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Text('خدمات پیشنهادی',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
+
                   if (filteredServices.isEmpty)
-                    const Center(child: CircularProgressIndicator())
+                    const Center(child: Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: CircularProgressIndicator(),
+                    ))
                   else
                     ...filteredServices.map((service) => Container(
                       margin: const EdgeInsets.only(bottom: 12),
@@ -178,21 +157,29 @@ class _HomeScreenState extends State<HomeScreen> {
                           BoxShadow(blurRadius: 8, color: Colors.black12, offset: Offset(0, 2)),
                         ],
                       ),
+                      // Fixed: Added 'child:' and declared the ListTile
                       child: ListTile(
-                        contentPadding: const EdgeInsets.all(12),
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: service.imageUrl.isNotEmpty
-                              ? Image.network(service.imageUrl,
-                              width: 60, height: 60, fit: BoxFit.cover,
+                        leading: SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: service.imageUrl.isNotEmpty
+                                ? Image.network(
+                              service.imageUrl,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
                               errorBuilder: (_, __, ___) => Container(
-                                width: 60, height: 60,
                                 color: Colors.grey.shade200,
                                 child: const Icon(Icons.build),
-                              ))
-                              : Container(width: 60, height: 60,
+                              ),
+                            )
+                                : Container(
                               color: Colors.grey.shade200,
-                              child: const Icon(Icons.build)),
+                              child: const Icon(Icons.build),
+                            ),
+                          ),
                         ),
                         title: Text(service.getTitle(langCode),
                             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -201,15 +188,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             textAlign: TextAlign.right,
                             style: const TextStyle(fontSize: 12)),
                         trailing: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (_) => ServiceDetailScreen(service: service),
-                            ));
-                          },
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(
+                              builder: (_) => ServiceDetailScreen(service: service))),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryTeal,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
                           child: const Text('مشاهده', style: TextStyle(color: Colors.white)),
                         ),

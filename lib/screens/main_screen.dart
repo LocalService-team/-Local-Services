@@ -41,13 +41,13 @@ class _MainScreenState extends State<MainScreen> {
         return Scaffold(
           body: Stack(
             children: [
-              // Pages with bottom padding to avoid nav bar overlap
-              IndexedStack(
-                index: _currentIndex,
-                children: pages,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 100),
+                child: IndexedStack(
+                  index: _currentIndex,
+                  children: pages,
+                ),
               ),
-
-              // Floating nav bar at bottom
               Positioned(
                 bottom: bottomPadding + 12,
                 left: 24,
@@ -131,4 +131,3 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
-
