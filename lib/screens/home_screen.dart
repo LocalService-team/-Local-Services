@@ -1,11 +1,12 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:local_services/models/service.dart';
 import '../data/service_data.dart';
 import '../theme/app_colors.dart';
 import '../screens/service_list_screen.dart';
 import '../screens/service_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required List<Service> services});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -79,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [

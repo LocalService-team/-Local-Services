@@ -60,4 +60,10 @@ class AppTheme {
       ),
     );
   }
+  // Added for login/welcome screens
+  static const Color background = Color(0xFFF5F5F0);
+  static const Color secondaryTeal = Color(0xFF00838A);
+  static const Color textMain = Color(0xFF1C1B1F);
+  static const Color textSub = Color(0xFF6B7280);
+  static const Color cardBackground = Color(0xFFFFFFFF);
 }

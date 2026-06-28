@@ -71,7 +71,7 @@ class ServiceCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    service.getTitle(langCode), // ✅ multilingual title
+                    service.getTitle(langCode), //  multilingual title
                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 6),
@@ -82,7 +82,7 @@ class ServiceCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      service.categoryKey, // ✅ using categoryKey
+                      service.categoryKey, //  using categoryKey
                       style: const TextStyle(
                         color: Color(0xFF047857),
                         fontSize: 12,
@@ -96,7 +96,7 @@ class ServiceCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            service.getAddress(langCode), // ✅ multilingual address
+            service.getAddress(langCode), //  multilingual address
             style: const TextStyle(color: AppColors.textSub),
           ),
           const SizedBox(height: 18),
