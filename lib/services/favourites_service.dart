@@ -1,22 +1,38 @@
-﻿import 'package:shared_preferences/shared_preferences.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FavouritesService {
-  static const String _key = 'favourites';
+  static String get _uid => FirebaseAuth.instance.currentUser!.uid;
 
-  static Future<List<String>> getFavourites() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getStringList(_key) ?? [];
+  static bool get isLoggedIn {
+    return FirebaseAuth.instance.currentUser != null;
   }
 
-  static Future<void> toggleFavourite(String serviceId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final favourites = prefs.getStringList(_key) ?? [];
-    if (favourites.contains(serviceId)) {
-      favourites.remove(serviceId);
+  static CollectionReference<Map<String, dynamic>> get _favoritesRef {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(_uid)
+        .collection('favorites');
+  }
+
+  static Future<List<String>> getFavourites() async {
+    final snapshot = await _favoritesRef.get();
+
+    return snapshot.docs.map((doc) => doc.id).toList();
+  }
+
+  static Future<bool> toggleFavourite(String serviceId) async {
+    final doc = await _favoritesRef.doc(serviceId).get();
+
+    if (doc.exists) {
+      await _favoritesRef.doc(serviceId).delete();
+      return false;
     } else {
-      favourites.add(serviceId);
+      await _favoritesRef.doc(serviceId).set({
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      return true;
     }
-    await prefs.setStringList(_key, favourites);
   }
 
   static Future<bool> isFavourite(String serviceId) async {

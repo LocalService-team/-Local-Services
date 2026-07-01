@@ -14,10 +14,41 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMixin {
+class _MapScreenState extends State<MapScreen>
+    with SingleTickerProviderStateMixin {
   String _searchQuery = '';
   late TabController _tabController;
   Set<String> _favourites = {};
+
+  Set<String> _savingFavourites = {};
+
+  Future<void> _toggleFavourite(String id) async {
+    if (!FavouritesService.isLoggedIn) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Please sign in to save favourites. Or create an account.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _savingFavourites.add(id);
+    });
+
+    try {
+      await FavouritesService.toggleFavourite(id);
+      await _loadFavourites();
+    } finally {
+      if (mounted) {
+        setState(() {
+          _savingFavourites.remove(id);
+        });
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -37,20 +68,20 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
     setState(() => _favourites = ids.toSet());
   }
 
-  Future<void> _toggleFavourite(String id) async {
-    await FavouritesService.toggleFavourite(id);
-    await _loadFavourites();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final filtered = widget.services.where((s) =>
-    s.latitude != null &&
-        s.longitude != null &&
-        s.matchesSearch(_searchQuery)
-    ).toList();
+    final filtered = widget.services
+        .where(
+          (s) =>
+              s.latitude != null &&
+              s.longitude != null &&
+              s.matchesSearch(_searchQuery),
+        )
+        .toList();
 
-    final favouriteServices = filtered.where((s) => _favourites.contains(s.id)).toList();
+    final favouriteServices = filtered
+        .where((s) => _favourites.contains(s.id))
+        .toList();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -61,8 +92,10 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  const Text('خدمات',
-                      style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'خدمات',
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  ),
                   const Spacer(),
                   IconButton(icon: const Icon(Icons.tune), onPressed: () {}),
                   IconButton(
@@ -89,40 +122,58 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                 children: [
                   TileLayer(
                     urlTemplate:
-                    'https://cartodb-basemaps-a.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
+                        'https://cartodb-basemaps-a.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
                     userAgentPackageName: 'com.example.local_services',
                   ),
                   MarkerLayer(
-                    markers: filtered.map((service) => Marker(
-                      point: LatLng(service.latitude!, service.longitude!),
-                      width: 120,
-                      height: 80,
-                      child: GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ServiceDetailScreen(service: service),
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColors.homeHeader,
-                                borderRadius: BorderRadius.circular(8),
+                    markers: filtered
+                        .map(
+                          (service) => Marker(
+                            point: LatLng(
+                              service.latitude!,
+                              service.longitude!,
+                            ),
+                            width: 120,
+                            height: 80,
+                            child: GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      ServiceDetailScreen(service: service),
+                                ),
                               ),
-                              child: Text(
-                                service.titleFa,
-                                style: const TextStyle(color: Colors.white, fontSize: 11),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.homeHeader,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      service.titleFa,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.location_pin,
+                                    color: Colors.red,
+                                    size: 32,
+                                  ),
+                                ],
                               ),
                             ),
-                            const Icon(Icons.location_pin, color: Colors.red, size: 32),
-                          ],
-                        ),
-                      ),
-                    )).toList(),
+                          ),
+                        )
+                        .toList(),
                   ),
                 ],
               ),
@@ -144,11 +195,13 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
                   _ServiceList(
                     services: filtered,
                     favourites: _favourites,
+                    savingFavourites: _savingFavourites,
                     onToggleFavourite: _toggleFavourite,
                   ),
                   _ServiceList(
                     services: favouriteServices,
                     favourites: _favourites,
+                    savingFavourites: _savingFavourites,
                     onToggleFavourite: _toggleFavourite,
                   ),
                 ],
@@ -164,11 +217,13 @@ class _MapScreenState extends State<MapScreen> with SingleTickerProviderStateMix
 class _ServiceList extends StatelessWidget {
   final List<Service> services;
   final Set<String> favourites;
+  final Set<String> savingFavourites;
   final Future<void> Function(String id) onToggleFavourite;
 
   const _ServiceList({
     required this.services,
     required this.favourites,
+    required this.savingFavourites,
     required this.onToggleFavourite,
   });
 
@@ -198,28 +253,47 @@ class _ServiceList extends StatelessWidget {
         return ListTile(
           leading: ClipOval(
             child: service.imageUrl.isNotEmpty
-                ? Image.network(service.imageUrl,
-                width: 44, height: 44, fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                    width: 44, height: 44,
+                ? Image.network(
+                    service.imageUrl,
+                    width: 44,
+                    height: 44,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      width: 44,
+                      height: 44,
+                      color: Colors.grey.shade200,
+                      child: const Icon(Icons.build, size: 20),
+                    ),
+                  )
+                : Container(
+                    width: 44,
+                    height: 44,
                     color: Colors.grey.shade200,
-                    child: const Icon(Icons.build, size: 20)))
-                : Container(width: 44, height: 44,
-                color: Colors.grey.shade200,
-                child: const Icon(Icons.build, size: 20)),
+                    child: const Icon(Icons.build, size: 20),
+                  ),
           ),
-          title: Text(service.titleFa,
-              style: const TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(
+            service.titleFa,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           subtitle: Text(_getCategoryLabel(service.categoryKey)),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: Icon(
-                  isFav ? Icons.favorite : Icons.favorite_border,
-                  color: isFav ? Colors.red : Colors.grey,
-                ),
-                onPressed: () => onToggleFavourite(service.id),
+                icon: savingFavourites.contains(service.id)
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        color: isFav ? Colors.red : Colors.grey,
+                      ),
+                onPressed: savingFavourites.contains(service.id)
+                    ? null
+                    : () => onToggleFavourite(service.id),
               ),
               IconButton(
                 icon: const Icon(Icons.info_outline, color: Colors.grey),
@@ -243,12 +317,15 @@ class _ServiceSearchDelegate extends SearchDelegate {
   _ServiceSearchDelegate({required this.onQuery});
 
   @override
-  List<Widget> buildActions(BuildContext context) =>
-      [IconButton(icon: const Icon(Icons.clear), onPressed: () => query = '')];
+  List<Widget> buildActions(BuildContext context) => [
+    IconButton(icon: const Icon(Icons.clear), onPressed: () => query = ''),
+  ];
 
   @override
-  Widget buildLeading(BuildContext context) =>
-      IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => close(context, null));
+  Widget buildLeading(BuildContext context) => IconButton(
+    icon: const Icon(Icons.arrow_back),
+    onPressed: () => close(context, null),
+  );
 
   @override
   Widget buildResults(BuildContext context) {
