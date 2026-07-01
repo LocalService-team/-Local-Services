@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'main_screen.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_colors.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -129,11 +130,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: AppColors.textSub,
                     size: 22,
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                  ),
                 ),
               ),
 
