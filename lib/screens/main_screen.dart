@@ -22,6 +22,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get padding to ensure the floating bar sits above system UI (like home indicators)
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return StreamBuilder<List<Service>>(
@@ -29,7 +30,8 @@ class _MainScreenState extends State<MainScreen> {
       builder: (context, snapshot) {
         final services = snapshot.data ?? [];
 
-        final pages = [
+        // Define pages inside the builder so they have access to 'services'
+        final List<Widget> pages = [
           HomeScreen(services: services),
           MapScreen(services: services),
           FavouritesScreen(key: ValueKey(_favouritesRefreshKey)),
@@ -39,17 +41,20 @@ class _MainScreenState extends State<MainScreen> {
         ];
 
         return Scaffold(
+          // Use extendBody to let content draw behind the navigation area
+          extendBody: true,
           body: Stack(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 140),
+              Positioned.fill( // This forces the child to fill the entire Stack area
                 child: IndexedStack(
                   index: _currentIndex,
                   children: pages,
                 ),
               ),
+
+              // Floating Navigation Bar
               Positioned(
-                bottom: bottomPadding + 12,
+                bottom: bottomPadding > 0 ? bottomPadding + 10 : 20,
                 left: 24,
                 right: 24,
                 child: Container(

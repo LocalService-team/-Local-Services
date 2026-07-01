@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import '../models/service.dart';
 import '../theme/app_colors.dart';
 import '../screens/service_list_screen.dart';
@@ -7,17 +8,13 @@ import 'notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Service> services;
-  final double bottomPadding;
-  const HomeScreen({super.key,
-    required this.services,
-    this.bottomPadding = 100.0,});
+  const HomeScreen({super.key, required this.services});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Changed from final so it can be updated by the TextField
   String _searchQuery = '';
 
   final List<Map<String, dynamic>> categories = [
@@ -31,15 +28,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final langCode = Localizations.localeOf(context).languageCode;
     final statusBarHeight = MediaQuery.of(context).padding.top;
-
-    final filteredServices = widget.services.where((service) =>
-        service.matchesSearch(_searchQuery)
-    ).toList();
+    final filteredServices = widget.services.where((s) => s.matchesSearch(_searchQuery)).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F0),
-      body: Column(
+      body: ListView(
+        padding: EdgeInsets.zero,
+        // The physics below ensures it always behaves like a scrollable list
+        physics: const BouncingScrollPhysics(),
         children: [
+          // Header Section
           Container(
             padding: EdgeInsets.fromLTRB(20, statusBarHeight + 20, 20, 20),
             decoration: BoxDecoration(
@@ -55,15 +53,38 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const CircleAvatar(
-                      backgroundColor: Colors.white24,
-                      child: Icon(Icons.person, color: Colors.white),
-                    ),
+                        backgroundColor: Colors.white24,
+                        child: Icon(Icons.person, color: Colors.white)),
                     const Text('خدمات محلی',
                         style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
                     IconButton(
-                      icon: const Icon(Icons.notifications_none, color: Colors.white, size: 28),
+                      icon: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          const Icon(Icons.notifications_none, color: Colors.white, size: 28),
+                          Positioned(
+                            right: -6, top: -6,
+                            child: StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('notifications')
+                                  .where('isRead', isEqualTo: false)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                final count = snapshot.data?.docs.length ?? 0;
+                                if (count == 0) return const SizedBox.shrink();
+                                return Container(
+                                  padding: const EdgeInsets.all(4), // Fixed padding here
+                                  decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                                  child: Text(count.toString(),
+                                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                       onPressed: () => Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const NotificationsScreen())),
+                          MaterialPageRoute(builder: (_) => NotificationsScreen())),
                     ),
                   ],
                 ),
@@ -75,7 +96,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: TextField(
                     textAlign: TextAlign.right,
-                    // Updated to actually set the state
                     onChanged: (value) => setState(() => _searchQuery = value),
                     decoration: const InputDecoration(
                       hintText: 'جستجو...',
@@ -88,118 +108,99 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(20, 20, 20, widget.bottomPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const Text('دسته‌بندی‌ها',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  GridView.count(
-                    crossAxisCount: 2,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    children: categories.map((cat) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (_) => ServiceListScreen(
-                              categoryKey: cat['key'],
-                              categoryLabel: cat['labelFa'],
-                              services: widget.services,
-                            ),
-                          ));
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: (cat['color'] as Color).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: (cat['color'] as Color).withValues(alpha: 0.3),
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(cat['icon'] as IconData, size: 48, color: cat['color'] as Color),
-                              const SizedBox(height: 12),
-                              Text(cat['labelFa'],
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
-                                      color: cat['color'] as Color)),
-                            ],
-                          ),
+
+          // Content Section
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const Text('دسته‌بندی‌ها',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  children: categories.map((cat) {
+                    return GestureDetector(
+                      onTap: () => Navigator.push(context, MaterialPageRoute(
+                        builder: (_) => ServiceListScreen(
+                          categoryKey: cat['key'],
+                          categoryLabel: cat['labelFa'],
+                          services: widget.services,
                         ),
-                      );
-                    }).toList(),
-                  ),
-
-                  const SizedBox(height: 24),
-                  const Text('خدمات پیشنهادی',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-
-                  if (filteredServices.isEmpty)
-                    const Center(child: Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: CircularProgressIndicator(),
-                    ))
-                  else
-                    ...filteredServices.map((service) => Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: const [
-                          BoxShadow(blurRadius: 8, color: Colors.black12, offset: Offset(0, 2)),
-                        ],
+                      )),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: (cat['color'] as Color).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: (cat['color'] as Color).withValues(alpha: 0.3)),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(cat['icon'] as IconData, size: 48, color: cat['color'] as Color),
+                            const SizedBox(height: 12),
+                            Text(cat['labelFa'],
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
+                                    color: cat['color'] as Color)),
+                          ],
+                        ),
                       ),
-                      // Fixed: Added 'child:' and declared the ListTile
-                      child: ListTile(
-                        leading: SizedBox(
-                          width: 60,
-                          height: 60,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: service.imageUrl.isNotEmpty
-                                ? Image.network(
-                              service.imageUrl,
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 24),
+                const Text('خدمات پیشنهادی',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                if (filteredServices.isEmpty)
+                  const Center(child: Padding(padding: EdgeInsets.only(top: 20), child: CircularProgressIndicator()))
+                else
+                  ...filteredServices.map((service) => Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: const [
+                        BoxShadow(blurRadius: 8, color: Colors.black12, offset: Offset(0, 2)),
+                      ],
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(12),
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: service.imageUrl.isNotEmpty
+                            ? Image.network(service.imageUrl,
+                            width: 60, height: 60, fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                                width: 60, height: 60,
                                 color: Colors.grey.shade200,
-                                child: const Icon(Icons.build),
-                              ),
-                            )
-                                : Container(
-                              color: Colors.grey.shade200,
-                              child: const Icon(Icons.build),
-                            ),
-                          ),
-                        ),
-                        title: Text(service.getTitle(langCode),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.right),
-                        subtitle: Text(service.getAddress(langCode),
-                            textAlign: TextAlign.right,
-                            style: const TextStyle(fontSize: 12)),
-                        trailing: ElevatedButton(
-                          onPressed: () => Navigator.push(context, MaterialPageRoute(
-                              builder: (_) => ServiceDetailScreen(service: service))),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryTeal,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          ),
-                          child: const Text('مشاهده', style: TextStyle(color: Colors.white)),
-                        ),
+                                child: const Icon(Icons.build)))
+                            : Container(width: 60, height: 60,
+                            color: Colors.grey.shade200,
+                            child: const Icon(Icons.build)),
                       ),
-                    )),
-                ],
-              ),
+                      title: Text(service.getTitle(langCode),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.right),
+                      subtitle: Text(service.getAddress(langCode),
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(fontSize: 12)),
+                      trailing: ElevatedButton(
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(
+                            builder: (_) => ServiceDetailScreen(service: service))),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryTeal,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                        child: const Text('مشاهده', style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  )),
+              ],
             ),
           ),
         ],
